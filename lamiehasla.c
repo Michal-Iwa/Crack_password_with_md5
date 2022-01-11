@@ -12,7 +12,7 @@
 
 pthread_mutex_t password_mutex;
 pthread_cond_t password_found_cv;
-int num_of_passwords_to_crack,how_many_left=0;
+int num_of_passwords_to_crack,how_many_left=0,amount_cracked=0;
 int num_of_words_in_dict;
 int count=0;
 
@@ -29,6 +29,11 @@ struct hash{
 }*dictionary;
 
 bool condition_password_not_found=true;
+
+void sig_handler()
+{
+        printf("Znaleziono %d haseł",amount_cracked);
+}
 
 void bytes2md5(const char *data, int len, char *md5buf)
 {
@@ -50,87 +55,78 @@ void *producer3(void *idp)
         long my_id = (long)idp;
         char word[64];
         char md5_word[33];
-        for(int j=0;j<num_of_words_in_dict && num_of_passwords_to_crack;j++)
+        for(int j=0;j<num_of_words_in_dict-1 && num_of_passwords_to_crack;j++)
         {
                 strcpy(word,dictionary[j].word);
                 for(int i=0;i<strlen(word);i++)
                 {
-                        word[i]=word[i]-32;
+                        if(word[i]>96 && word[i]<123) word[i]=word[i]-32;
                 }
-                bytes2md5(word, strlen(word), md5_word);
-                strcat(md5_word,"\0");
-                for(int i=0;i<num_of_passwords_to_crack;i++)
-                {
-                        if(!to_crack[i].cracked)
+                //for(int x=-1;x<1001;x++)
+                //{
+                        bytes2md5(word, strlen(word), md5_word);
+                        strcat(md5_word,"\0");
+                        for(int i=0;i<num_of_passwords_to_crack;i++)
                         {
-                                
-                                if(strcmp(md5_word,to_crack[i].password_md5)==0)
+                                if(!to_crack[i].cracked)
                                 {
-                                        pthread_mutex_lock(&password_mutex);
-                                        strcpy(to_crack[i].password, md5_word);
-                                        to_crack[i].cracked = true;
-                                        to_crack[i].cracked2=true;
-                                        how_many_left++;
-                                        pthread_mutex_unlock(&password_mutex);
+                                        if(strcmp(md5_word,to_crack[i].password_md5)==0)
+                                        {
+                                                pthread_mutex_lock(&password_mutex);
+                                                strcpy(to_crack[i].password, word);
+                                                to_crack[i].cracked = true;
+                                                to_crack[i].cracked2=true;
+                                                how_many_left++;
+                                                amount_cracked++;
+                                                pthread_cond_signal(&password_found_cv);
+                                                pthread_mutex_unlock(&password_mutex);
+                                        }   
                                 }
-                                
+                                nanosleep((const struct timespec[]){{0, 10}}, NULL);
                         }
-                        printf("watek%ld, %d\n",my_id,j);
-                        pthread_cond_signal(&password_found_cv);
-                        printf("watek%ld, %d\n",my_id,j);
-                        nanosleep((const struct timespec[]){{0, 10}}, NULL);
-                        pthread_cond_signal(&password_found_cv);
-                        printf("watek%ld, %d\n",my_id,j);
-                        
-                }
+                //}
         }
         count++;
-        printf("xD3");
-        pthread_exit (NULL);
 }
 void *producer2(void *idp) 
 {      
         long my_id = (long)idp;
         char word[64];
         char md5_word[33];
-        for(int j=0;j<num_of_words_in_dict && num_of_passwords_to_crack;j++)
+        for(int j=0;j<num_of_words_in_dict-1 && num_of_passwords_to_crack;j++)
         {
                 strcpy(word,dictionary[j].word);
-                word[0]=word[0]-32;
+                if (word[0]>96 && word[0]<123) word[0]=word[0]-32;
                 bytes2md5(word, strlen(word), md5_word);
                 strcat(md5_word,"\0");
                 for(int i=0;i<num_of_passwords_to_crack;i++)
-                {
+                {       
                         if(!to_crack[i].cracked)
                         {
                                 if(strcmp(md5_word,to_crack[i].password_md5)==0)
                                 {
                                         pthread_mutex_lock(&password_mutex);
-                                        strcpy(to_crack[i].password, md5_word);
+                                        strcpy(to_crack[i].password, word);
                                         to_crack[i].cracked = true;
                                         to_crack[i].cracked2=true;
                                         how_many_left++;
+                                        amount_cracked++;
+                                        pthread_cond_signal(&password_found_cv);
                                         pthread_mutex_unlock(&password_mutex);
                                 }
                                 
                         }
-                        printf("watek%ld, %d\n",my_id,j);
-                        pthread_cond_signal(&password_found_cv);
-                        printf("watek%ld, %d\n",my_id,j);
+                        
                         nanosleep((const struct timespec[]){{0, 10}}, NULL);
-                        pthread_cond_signal(&password_found_cv);
-                        printf("watek%ld, %d\n",my_id,j);
                 }
                 
         }
         count++;
-        printf("xD2");
-        pthread_exit (NULL);
 }
 void *producer1(void *idp) 
 {      
         long my_id = (long)idp;
-        for(int j=0;j<num_of_words_in_dict && num_of_passwords_to_crack;j++)
+        for(int j=0;j<num_of_words_in_dict-1 && num_of_passwords_to_crack;j++)
         {
                 bytes2md5(dictionary[j].word, strlen(dictionary[j].word), dictionary[j].md5);
                 strcat(dictionary[j].md5,"\0");
@@ -147,56 +143,42 @@ void *producer1(void *idp)
                                         to_crack[i].cracked = true;
                                         to_crack[i].cracked2=true;
                                         how_many_left++;
+                                        amount_cracked++;
+                                        pthread_cond_signal(&password_found_cv);
                                         pthread_mutex_unlock(&password_mutex);
                                         
                                 }
                                 
                         }
-                        printf("watek%ld, %d\n",my_id,j);
-                        pthread_cond_signal(&password_found_cv);
-                        printf("watek%ld, %d\n",my_id,j);
-                        nanosleep((const struct timespec[]){{0, 10}}, NULL);
-                        pthread_cond_signal(&password_found_cv);
-                        printf("watek%ld, %d\n",my_id,j);
+                       nanosleep((const struct timespec[]){{0, 10}}, NULL);
                 }
         }
         count++;
-        printf("xD1");
-        pthread_exit (NULL);
 }
-// Nowy pomysł:
-//stworzyć kilku konsumentów
-
-
-
-
-
 
 void *consumer(void *idp) 
 {
         long my_id = (long)idp;
         int j;
-        int crackedplusone=1;
         while(count<NUM_THREADS-1 || how_many_left)//muszę tutaj dodać warunek jak wszystkie wątki skończą szukać to wyjść
         {
                 pthread_mutex_lock(&password_mutex);
                 while(!how_many_left){
-                        printf("czekam");
-                pthread_cond_wait(&password_found_cv, &password_mutex);
+                        pthread_cond_wait(&password_found_cv, &password_mutex);
                 }
                 for(j=0;to_crack[j].cracked2==false;j++);
                 printf("Password for %s is %s\n",to_crack[j].login,to_crack[j].password);
                 to_crack[j].cracked2=false;
                 how_many_left--;
                 pthread_mutex_unlock(&password_mutex);
-                //nanosleep((const struct timespec[]){{0, 10}}, NULL);
+                sleep(1);
         }
-        printf("done");
-        pthread_exit (NULL);
+        printf("Znaleziono %d haseł. Koniec programu\n",amount_cracked);
 }
 
 int main()
 {
+        signal(SIGHUP,sig_handler);
         int SIZE=128;
         char name_dictinary[128],name_login[128];
         FILE *dict,*login;
@@ -264,6 +246,7 @@ int main()
         pthread_cond_init (&password_found_cv, NULL);
         pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
         pthread_create(&threads[0], &attr, consumer, (void *)0);
+        nanosleep((const struct timespec[]){{0, 100}}, NULL);
         pthread_create(&threads[1], &attr, producer1, (void *)1);
         pthread_create(&threads[2], &attr, producer2, (void *)2);
         pthread_create(&threads[3], &attr, producer3, (void *)3);
