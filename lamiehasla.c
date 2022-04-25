@@ -10,6 +10,7 @@
 
 #define NUM_THREADS 7
 
+
 pthread_mutex_t password_mutex;
 pthread_cond_t password_found_cv;
 int num_of_passwords_to_crack=0, how_many_left = 0, amount_cracked = 0;
