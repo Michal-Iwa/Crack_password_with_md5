@@ -9,7 +9,6 @@
 #include <time.h>
 
 #define NUM_THREADS 7
-#define NUMBER 101
 
 pthread_mutex_t password_mutex;
 pthread_cond_t password_found_cv;
@@ -62,7 +61,7 @@ void *producer_dwuwyrazowy3(void *idp)
         char tmp[64];
         char tmp2[64];
         char md5_word[33];
-        printf("Thread %ld started his work.\n",my_id);
+        printf("%ld\n",my_id);
         for (int j = 0; j < num_of_words_in_dict && num_of_passwords_to_crack; j++)
         {
                 strcpy(temp, dictionary[j].word);
@@ -128,8 +127,7 @@ void *producer_dwuwyrazowy3(void *idp)
                 }
         }
         count++;
-        printf("Thread %ld ended his work.\n",my_id);
-        pthread_cond_signal(&password_found_cv);
+        printf("%ldXD",my_id);
 }
 void *producer_dwuwyrazowy2(void *idp)
 {
@@ -140,7 +138,7 @@ void *producer_dwuwyrazowy2(void *idp)
         char tmp[64];
         char tmp2[64];
         char md5_word[33];
-        printf("Thread %ld started his work.\n",my_id);
+        printf("%ld\n",my_id);
         for (int j = 0; j < num_of_words_in_dict && num_of_passwords_to_crack; j++)
         {
                 strcpy(temp, dictionary[j].word);
@@ -212,8 +210,7 @@ void *producer_dwuwyrazowy2(void *idp)
                 }
         }
         count++;
-        printf("Thread %ld ended his work.\n",my_id);
-        pthread_cond_signal(&password_found_cv);
+        printf("%ldXD",my_id);
 }
 void *producer_dwuwyrazowy1(void *idp)
 {
@@ -224,7 +221,7 @@ void *producer_dwuwyrazowy1(void *idp)
         char tmp[64];
         char tmp2[64];
         char md5_word[33];
-        printf("Thread %ld started his work.\n",my_id);
+        printf("%ld\n",my_id);
         for (int j = 0; j < num_of_words_in_dict && num_of_passwords_to_crack; j++)
         {
                 strcpy(temp, dictionary[j].word);
@@ -283,8 +280,7 @@ void *producer_dwuwyrazowy1(void *idp)
                 }
         }
         count++;
-        printf("Thread %ld ended his work.\n",my_id);
-        pthread_cond_signal(&password_found_cv);
+        printf("%ldXD",my_id);
 }
 void *producer3(void *idp)
 {
@@ -292,7 +288,7 @@ void *producer3(void *idp)
         char word[256];
         char tmp[128];
         char md5_word[33];
-        printf("Thread %ld started his work.\n",my_id);
+        printf("%ld\n",my_id);
         for (int j = 0; j < num_of_words_in_dict && num_of_passwords_to_crack; j++)
         {
                 strcpy(tmp, dictionary[j].word);
@@ -301,7 +297,7 @@ void *producer3(void *idp)
                         if (tmp[i] > 96 && tmp[i] < 123)
                                 tmp[i] = tmp[i] - 32;
                 }
-                for (int x = -1; x < NUMBER; x++)
+                for (int x = -1; x < 1001; x++)
                 {
                         if (x < 0)
                                 sprintf(word,"%s",tmp);
@@ -330,7 +326,7 @@ void *producer3(void *idp)
                                 //nanosleep((const struct timespec[]){{0, 1}}, NULL);
                         }
                 }
-                for (int x = 0; x < NUMBER; x++)
+                for (int x = 0; x < 1001; x++)
                 {
                         sprintf(word, "%d%s", x, tmp);
                         bytes2md5(word, strlen(word), md5_word);
@@ -354,9 +350,9 @@ void *producer3(void *idp)
                                 //nanosleep((const struct timespec[]){{0, 1}}, NULL);
                         }
                 }
-                for (int z = 0; z < NUMBER; z++)
+                for (int z = 0; z < 1001; z++)
                 {
-                        for (int x = 0; x < NUMBER; x++)
+                        for (int x = 0; x < 1001; x++)
                         {
                                 sprintf(word, "%d%s%d", x, tmp, z);
                                 bytes2md5(word, strlen(word), md5_word);
@@ -383,8 +379,7 @@ void *producer3(void *idp)
                 }
         }
         count++;
-        printf("Thread %ld ended his work.\n",my_id);
-        pthread_cond_signal(&password_found_cv);
+        printf("%ldXD",my_id);
 }
 void *producer2(void *idp)
 {
@@ -392,14 +387,13 @@ void *producer2(void *idp)
         char word[256];
         char tmp[128];
         char md5_word[33];
-        printf("Thread %ld started his work.\n",my_id);
+        printf("%ld\n",my_id);
         for (int j = 0; j < num_of_words_in_dict && num_of_passwords_to_crack; j++)
         {
-                printf("%s\n",dictionary[j].word);
                 strcpy(tmp, dictionary[j].word);
                 if (tmp[0] > 96 && tmp[0] < 123)
                         tmp[0] = tmp[0] - 32;
-                for (int x = -1; x < NUMBER; x++)
+                for (int x = -1; x < 1001; x++)
                 {
                         if (x < 0)
                                 sprintf(word,"%s",tmp);
@@ -428,7 +422,7 @@ void *producer2(void *idp)
                                 //nanosleep((const struct timespec[]){{0, 1}}, NULL);
                         }
                 }
-                for (int x = 0; x < NUMBER; x++)
+                for (int x = 0; x < 1001; x++)
                 {
                         sprintf(word, "%d%s", x, tmp);
                         bytes2md5(word, strlen(word), md5_word);
@@ -453,9 +447,9 @@ void *producer2(void *idp)
                                 //nanosleep((const struct timespec[]){{0, 1}}, NULL);
                         }
                 }
-                for (int z = 0; z < NUMBER; z++)
+                for (int z = 0; z < 1001; z++)
                 {
-                        for (int x = 0; x < NUMBER; x++)
+                        for (int x = 0; x < 1001; x++)
                         {
                                 sprintf(word, "%d%s%d", x, tmp, z);
                                 bytes2md5(word, strlen(word), md5_word);
@@ -482,8 +476,7 @@ void *producer2(void *idp)
                 }
         }
         count++;
-        printf("Thread %ld ended his work.\n",my_id);
-        pthread_cond_signal(&password_found_cv);
+        printf("%ldXD",my_id);
 }
 void *producer1(void *idp)
 {
@@ -491,11 +484,12 @@ void *producer1(void *idp)
         char word[256];
         char tmp[128];
         char md5_word[33];
-        printf("Thread %ld started his work.\n",my_id);
+        printf("%ld\n",my_id);
         for (int j = 0; j < num_of_words_in_dict && num_of_passwords_to_crack; j++)
         {
                 strcpy(tmp, dictionary[j].word);
-                for (int x = -1; x < NUMBER; x++)
+                printf("%s\n",tmp);
+                for (int x = -1; x < 1001; x++)
                 {
                         if (x < 0)
                                 sprintf(word,"%s",tmp);
@@ -524,7 +518,7 @@ void *producer1(void *idp)
                                 //nanosleep((const struct timespec[]){{0, 1}}, NULL);
                         }
                 }
-                for (int x = 0; x < NUMBER; x++)
+                for (int x = 0; x < 1001; x++)
                 {
                         sprintf(word, "%d%s", x, tmp);
                         bytes2md5(word, strlen(word), md5_word);
@@ -548,9 +542,9 @@ void *producer1(void *idp)
                                 //nanosleep((const struct timespec[]){{0, 1}}, NULL);
                         }
                 }
-                for (int z = 0; z < NUMBER; z++)
+                for (int z = 0; z < 1001; z++)
                 {
-                        for (int x = 0; x < NUMBER; x++)
+                        for (int x = 0; x < 1001; x++)
                         {
                                 sprintf(word, "%d%s%d", x, tmp, z);
                                 bytes2md5(word, strlen(word), md5_word);
@@ -578,35 +572,32 @@ void *producer1(void *idp)
                 }
         }
         count++;
-        printf("Thread %ld ended his work.\n",my_id);
-        pthread_cond_signal(&password_found_cv);
+        printf("%ldXD",my_id);
 }
+//dodane prefixy i nic nie dziala xD KOzak
+
 
 void *consumer(void *idp)
 {
         long my_id = (long)idp;
         int j;
-        //pthread_mutex_lock(&password_mutex);
-        while (count < NUM_THREADS-1 || how_many_left) 
+        
+        while (count < NUM_THREADS - 1 || how_many_left) //muszę tutaj dodać warunek jak wszystkie wątki skończą szukać to wyjść
         {
                 pthread_mutex_lock(&password_mutex);
-                while (!how_many_left && count < NUM_THREADS-1)
+                while (!how_many_left)
                 {
                         pthread_cond_wait(&password_found_cv, &password_mutex);
                 }
-                for (j = 0; to_crack[j].cracked2 == false && j< num_of_passwords_to_crack; j++)
+                for (j = 0; to_crack[j].cracked2 == false; j++)
                         ;
-                if(to_crack[j].cracked2 == true) 
-                {
-                        printf("Password for %s is %s\n", to_crack[j].login, to_crack[j].password);
-                        to_crack[j].cracked2 = false;
-                        how_many_left--;
-                }
+                printf("Password for %s is %s\n", to_crack[j].login, to_crack[j].password);
+                to_crack[j].cracked2 = false;
+                how_many_left--;
                 pthread_mutex_unlock(&password_mutex);
-                //sleep(3);                    
+                sleep(3);                    //    ??????????????????
                 //nanosleep((const struct timespec[]){{0, 10000L}}, NULL);
         }
-        //pthread_mutex_unlock(&password_mutex);
         printf("Znaleziono %d haseł. Koniec programu\n", amount_cracked);
 }
 
@@ -645,9 +636,10 @@ int main()
         }
         struct hash *tmp;
         dictionary = calloc(sizeof(struct hash), SIZE);
-        for (int i = 0;((sign = getc(dict)) != EOF); i++)
+        printf("Reading file\n");
+        for (int i = 0; (sign = getc(dict)) != EOF && (sign = getc(login)) != EOF; i++)
         {
-                if (i == SIZE - 2)
+                if (i == SIZE - 1)
                 {
                         SIZE = SIZE * 2;
                         if (dictionary)
@@ -657,29 +649,33 @@ int main()
                                         dictionary = tmp;
                         }
                 }
-                if(i==0) fseek(dict, -1, SEEK_CUR);
+                fseek(dict, -2, SEEK_CUR);
                 (void)fscanf(dict, "%s", dictionary[i].word);
+                if(i==10000) printf("Reading file 10000\n");
+                if(i==889067)printf("Halfway\n");
                 num_of_words_in_dict++;
         }
-        num_of_words_in_dict--;
+        printf("end\n");
+        printf("%d ",num_of_words_in_dict);
         sign='0';
         fclose(dict);
         int skip = 0;
-        for (int j = 0;(sign = getc(login)) != EOF; j++)
+        for (int j = 0; (sign = getc(login)) != EOF && (sign = getc(login)) != EOF; j++)
         {
-                if(j==0) fseek(login, -1, SEEK_CUR);
+                fseek(login, -2, SEEK_CUR);
                 (void)fscanf(login, "%d", &skip);
                 (void)fscanf(login, "%s", to_crack[j].password_md5);
-                
                 strcat(to_crack[j].password_md5, "\0");
                 (void)fscanf(login, "%s", to_crack[j].login);
                 while ((sign = getc(login)) != '\n');
                 to_crack[j].cracked = false;
                 to_crack[j].cracked2 = false;
+                printf("%d\n",num_of_passwords_to_crack);
                 num_of_passwords_to_crack++;
         }
+        printf("%d",num_of_passwords_to_crack);
         fclose(login);
-        printf("Starting threads\n");
+        printf("starting threads\n");
         //Starting Thread work
         pthread_t threads[NUM_THREADS];
         pthread_attr_t attr;
